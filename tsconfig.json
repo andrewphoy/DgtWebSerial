@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "strict": true,
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "target": "ESNext",
+        "lib": [ "DOM", "ESNext" ],
+        "types": [ "Chessground" ]
+    }
+}

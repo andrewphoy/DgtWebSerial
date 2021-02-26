@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="css/chessground.base.css" />
+    <link rel="stylesheet" href="css/chessground.brown.css" />
+    <link rel="stylesheet" href="css/chessground.cburnett.css" />
+    <style type="text/css">
+        #board {
+            width: 600px;
+            height: 600px;
+            margin-top: 50px;
+        }
+
+        #log {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40vw;
+            height: 60vh;
+            margin-top: 10px;
+        }
+        #log textarea {
+            width: 97%;
+            height: 97%;
+        }
+    </style>
+</head>
+<body>
+    <button id="init" style="height: 100px; width: 200px;">Connect</button>
+
+    <span id="board-data">No board connected</span>
+
+    <div id="board"></div>
+    <div id="clocks">
+        <div id="white"></div>
+        <div id="black"></div>
+    </div>
+    <div id="log">
+        <textarea id="pgnbody"></textarea>
+    </div>
+    <script type="text/javascript" src="dist/js/dgt.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('init').addEventListener('click', () => dgt.init());
+
+        dgt.onConnect = function () {
+            document.getElementById('board-data').innerText = 'Board # ' + dgt.serialNumber + ' connected';
+        }
+    </script>
+</body>
+</html>
