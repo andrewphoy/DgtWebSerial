@@ -7,9 +7,6 @@ export interface LegalMove {
     promotion?: PieceType;
     result: Chess;
     legalMoves?: LegalMove[];
-    piece: PieceType;
     san: string;
     clockTime?: string;
-    isCapture: boolean;
-    isCheck: boolean;
 }

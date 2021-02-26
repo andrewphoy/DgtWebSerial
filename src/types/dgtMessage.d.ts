@@ -11,7 +11,7 @@ type DgtMessageType =
     | 'clockTime' 
     | 'fieldUpdate' 
     | 'eeMoves'
-    | 'busAddres'
+    | 'busAddress'
     | 'serialNumber'
     | 'trademark'
     | 'version'

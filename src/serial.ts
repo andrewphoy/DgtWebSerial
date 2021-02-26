@@ -27,7 +27,7 @@ export default class {
 
     constructor() {
         this.reader = new MessageReader();
-        this.reader.onMessage = this.handleSerialMessage.bind(this);
+        this.reader.onMessage = this.handleSerialMessage;
     }
 
 
@@ -171,7 +171,7 @@ export default class {
         writer.releaseLock();
     }
 
-    private handleSerialMessage(msg: DgtMessage) {
+    private handleSerialMessage = (msg: DgtMessage) => {
         if (this.onMessage) {
             this.onMessage(msg);
         }

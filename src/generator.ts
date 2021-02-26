@@ -2,6 +2,9 @@ import { LegalMove } from './types/move';
 import * as Utils from './utils';
 import * as Chessops from 'chessops';
 import { chessgroundDests } from 'chessops/compat';
+import { makeSan } from 'chessops/san';
+
+const promotionPieces: PieceType[] = new Array("rook", "knight", "bishop", "queen");
 
 export function legalMoves(position: Chessops.Position): LegalMove[] {
     let possibles: LegalMove[] = [];
@@ -26,52 +29,40 @@ export function legalMoves(position: Chessops.Position): LegalMove[] {
             let clone = position.clone();
 
             // special case promotions
-            
+            if (piece.role == "pawn") {
+                if ((piece.color == "white" && to[1] == "8") || piece.color == "black" && to[1] == "1") {
+                    // promotion
+                    promotionPieces.forEach((promo) => {
+                        let move = { from: ixFrom, to: ixDest, promotion: promo };
+                        clone.play(move);
+
+                        possibles.push(<LegalMove>{
+                            move: move,
+                            from: from,
+                            to: to,
+                            result: clone,
+                            san: makeSan(position, move)
+                        });
+                    });
+                    continue;
+                }
+            }
 
 
             // default
             let move = { from: ixFrom, to: ixDest };
             clone.play(move);
 
-            let legal: LegalMove = <LegalMove>{
+            possibles.push(<LegalMove>{
                 move: move,
                 from: from,
                 to: to,
                 result: clone,
-                piece: piece.role,
-                isCapture: isCapture,
-                isCheck: clone.isCheck()
-            };
-
-            legal.san = generateMoveSan(legal);
-            possibles.push(legal);
+                san: makeSan(position, move)
+            });
         }
     });
 
-    // check san for ambiguous moves
-    // a more elegant solution would try to disambiguate with only file or rank...
-    // also, it would be even better if we did not have to rely on legality
-    for (let i = 0; i < possibles.length; i++) {
-        let san = possibles[i].san;
-        for (let j = (i + 1); j < possibles.length; j++) {
-            let other = possibles[j].san;
-            if (san == other) {
-                possibles[i].san = generateMoveSan(possibles[i], true);
-                possibles[j].san = generateMoveSan(possibles[j], true);
-            }
-        }
-    }
-
+    console.log(possibles);
     return possibles;
-}
-
-function generateMoveSan(move: LegalMove, fullSan: boolean = false) {
-    if (move.piece == "pawn") {
-        return (move.isCapture ? move.from[0] + 'x' : '') + move.to;
-    }
-    if (fullSan) {
-        return Utils.sanPiece(move.piece) + move.from + (move.isCapture ? 'x' : '') + move.to;
-    } else {
-        return Utils.sanPiece(move.piece) + (move.isCapture ? 'x' : '') + move.to;
-    }
 }

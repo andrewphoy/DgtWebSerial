@@ -218,8 +218,8 @@ export default class {
     private getMoveTimeout(): number {
         // considerations...
         // extra time for castling?
-        // extra time for castling?
-        return 5000;
+        // based on remaining clock time?
+        return 1000;
     }
 
     private clearUncommittedMove() {
