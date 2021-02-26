@@ -147,9 +147,31 @@ export default class {
                     return true;
                 }
             }
-        }
+        } else {
+            
+            // it is possible for two valid moves to be entered simultaneously
+            // this is most likely because both players moved at the same time and the second
+            // move by ply started before the first one completed
+            // one detail we can use is that there is no valid way (in standard chess)
+            // to get to a given legal board state where both sides have moved unless both sides have 
+            // made a legal move
+            // i.e. there is no single move for white that will have all of the position changes
+            // of a move pair for white and black
 
-        //TODO check for a double move
+            for (let i = 0; i < this._validMoves!.length; i++) {
+                let firstMove = this._validMoves[i];
+                if (!firstMove.legalMoves) {
+                    firstMove.legalMoves = Generator.legalMoves(firstMove.result);
+                }
+                for (let j = 0; j < firstMove.legalMoves.length; j++) {
+                    let secondMove = firstMove.legalMoves[j];
+                    if (this.checkValidMove(pos, secondMove)) {
+                        this.setAndCommitMove(firstMove);
+                        this.setUncommittedMove(secondMove, pos);
+                    }
+                }
+            }
+        }
 
         return false;
     }
@@ -244,10 +266,6 @@ export default class {
             let ci = (this.currentPosition.turn == "black" ? this._clock.whiteClockInfo : this._clock.blackClockInfo);
             this._uncommittedMove.clockTime = Utils.clockToDisplay(ci);
         }
-        // if (this._clock?.metaInfo?.clockConnected) {
-        //     let ci =  this._whiteToMove ? this._clock.whiteClockInfo : this._clock.blackClockInfo;
-        //     move.clockTime = Utils.clockToDisplay(ci);
-        // }
 
         this._moves.push(this._uncommittedMove);
         this._currentPly++;
@@ -261,6 +279,24 @@ export default class {
         this.clearUncommittedMove();
     }
 
+    private setAndCommitMove(move: LegalMove) {
+        this.currentPosition = move.result;
+        this._validPosition = undefined;
+
+        // let move: Move = this._uncommittedMove!;
+        if (this._clock?.metaInfo?.clockConnected) {
+            let ci = (this.currentPosition.turn == "black" ? this._clock.whiteClockInfo : this._clock.blackClockInfo);
+            move.clockTime = Utils.clockToDisplay(ci);
+        }
+
+        this._moves.push(move);
+        this._currentPly++;
+        
+        this.moveCallback(move);
+
+        this._validMoves = undefined;
+        this.clearUncommittedMove();
+    }
 
     /**
      * Build the complete pgn for the game

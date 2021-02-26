@@ -82,7 +82,6 @@ export default class {
             this.buffer.fill(0, 0);
             return 0;
         } else {
-            console.log('keeping some number of bytes');
             // cb > length
             // we have additional bytes in the buffer, possibly from another message
             let newBuffer = new Uint8Array(this.initialBufferSize);
