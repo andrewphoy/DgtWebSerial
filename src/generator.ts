@@ -63,6 +63,5 @@ export function legalMoves(position: Chessops.Position): LegalMove[] {
         }
     });
 
-    console.log(possibles);
     return possibles;
 }
