@@ -28,6 +28,7 @@ export default class {
 
     public processStreamData(data: Uint8Array) {
         if (this.cb + data.length > this.bufferSize) {
+            //TODO double the buffer size
             // increase the size of the buffer
             throw 'out of space';
         }
@@ -87,7 +88,7 @@ export default class {
             let newBuffer = new Uint8Array(this.initialBufferSize);
 
             // copy the extra bytes from the old buffer to the new buffer
-            newBuffer.set(this.buffer.slice(this.ixMessageStart + length + 3, this.cb));
+            newBuffer.set(this.buffer.slice(this.ixMessageStart + length, this.cb));
             this.buffer = newBuffer;
             return (this.cb - length);
         }
